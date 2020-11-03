@@ -13,10 +13,6 @@ app.use(cors({optionsSuccessStatus: 200}));  // some legacy browsers choke on 20
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
 
-app.get("/api/timestamp/", (req, res) => {
-  res.json({ unix: Date.now(), utc: Date() });
-});
-
 app.get("/api/timestamp/:date_string", (req, res) => {
   let dateString = req.params.date_string;
 
@@ -25,7 +21,7 @@ app.get("/api/timestamp/:date_string", (req, res) => {
   if (/\d{5,}/.test(dateString)) {
     dateInt = parseInt(dateString);
     //Date regards numbers as unix timestamps, strings are processed differently
-    res.json({ unix: dateString, utc: new Date(dateInt).toUTCString() });
+    res.json({ "unix": dateString, "utc": new Date(dateInt).toUTCString() });
   }
 
   let dateObject = new Date(dateString);
@@ -33,11 +29,14 @@ app.get("/api/timestamp/:date_string", (req, res) => {
   if (dateObject.toString() === "Invalid Date") {
     res.json({ error: "Invalid Date" });
   } else {
-    res.json({ unix: dateObject.valueOf(), utc: dateObject.toUTCString() });
+    res.json({ "unix": dateObject.valueOf(), "utc": dateObject.toUTCString() });
   }
 });
 
 
+app.get("/api/timestamp/", (req, res) => {
+  res.json({ "unix": Date.now(), "utc": Date() });
+});
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
